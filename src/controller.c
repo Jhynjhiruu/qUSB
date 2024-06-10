@@ -12,7 +12,8 @@ u32 controller_init(void) {
     u8 attached;
     u32 num_controllers = 0;
 
-    osCreateMesgQueue(&controller_mesg_queue, &vi_retrace_mesg, 1);
+    osCreateMesgQueue(&controller_mesg_queue, controller_mesg_buf,
+                      ARRLEN(controller_mesg_buf));
     osSetEventMesg(OS_EVENT_SI, &controller_mesg_queue, (OSMesg)0);
 
     osContInit(&controller_mesg_queue, &attached, controller_status);
@@ -30,7 +31,7 @@ u32 controller_init(void) {
 }
 
 void read_controllers(void) {
-
-    osRecvMesg(&controller_mesg_queue, &vi_retrace_mesg, OS_MESG_BLOCK);
+    osContStartReadData(&controller_mesg_queue);
+    osRecvMesg(&controller_mesg_queue, &controller_mesg, OS_MESG_BLOCK);
     osContGetReadData((OSContPad *)controller_data);
 }

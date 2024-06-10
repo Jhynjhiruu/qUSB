@@ -13,3 +13,5 @@ OSMesg vi_mesg_buf[1];
 OSMesg vi_retrace_mesg;
 
 OSMesgQueue controller_mesg_queue;
+OSMesg controller_mesg_buf[1];
+OSMesg controller_mesg;

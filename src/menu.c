@@ -4,6 +4,7 @@
 #include "console.h"
 #include "controller.h"
 #include "remap.h"
+#include "usb.h"
 
 s32 osBbUsbInit(void);
 
@@ -43,7 +44,7 @@ static const Menu *menuStack[MAX_SUBMENUS];
 static const Menu *curMenu = NULL;
 static size_t selected = 0;
 
-static void switchMenu(const Menu *newMenu) {
+static void switchMenu(const Menu *const newMenu) {
     curMenu = newMenu;
     selected = 0;
 
@@ -116,30 +117,38 @@ static void ascend(void) {
 }
 
 static void startXInput(void) {
+#ifdef BBPLAYER
     osBbUsbInit();
-    // hook_usb(XINPUT);
+#endif
+    hook_usb(XINPUT);
     mode = DONE;
 }
 
 static void startPokken(void) {
+#ifdef BBPLAYER
     osBbUsbInit();
-    // hook_usb(POKKEN);
+#endif
+    hook_usb(POKKEN);
     mode = DONE;
 }
 
 static void startN64(void) {
+#ifdef BBPLAYER
     osBbUsbInit();
-    // hook_usb(N64);
+#endif
+    hook_usb(N64);
     mode = DONE;
 }
 
 static void startMass(void) {
+#ifdef BBPLAYER
     osBbUsbInit();
-    // hook_usb(MASS);
+#endif
+    hook_usb(MASS);
     mode = DONE;
 }
 
-static const Menu optionsMenu = {1, {{FUNCTION, "BACK", .function = ascend}}};
+static const Menu optionsMenu = {1, {{FUNCTION, "Back", .function = ascend}}};
 
 static const Menu mainMenu = {
     5,
@@ -153,9 +162,6 @@ static const Menu mainMenu = {
 };
 
 void menu(void) {
-    static char c = 'A';
-    static char buf[2] = {0};
-
     if (mode == DONE) {
         return;
     }
@@ -167,12 +173,6 @@ void menu(void) {
 
     parse_remap(&controllerData, sizeof(controllerData), passthrough);
 
-    buf[0] = c;
-    c++;
-    if (c > '~') {
-        c = ' ';
-    }
-    print_str(GREEN, 0, curMenu->numEntries, buf);
     switch (mode) {
         case NORMAL:
             {

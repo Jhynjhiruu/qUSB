@@ -119,7 +119,7 @@ static u8 stack[MAX_REMAP_INSTRS];
 
 static unsigned int stack_ptr;
 
-static u8 buttons[NUM_BUTTONS];
+u8 buttons[NUM_BUTTONS];
 
 static void reset_remap(void) {
     bzero(stack, sizeof(stack));
@@ -142,7 +142,7 @@ static u8 pop_stack(void) {
 #define BINARY_OP(op)                                                          \
     const u8 a = pop_stack();                                                  \
     const u8 b = pop_stack();                                                  \
-    push_stack(a op b);
+    push_stack(a op b)
 
 static u8 do_remap(const u8 *const mapping) {
     const size_t size = MIN(mapping[0], MAX_REMAP_INSTRS - 1);
@@ -209,12 +209,12 @@ StickData parse_remap(void *out, u8 bytes, u8 (*mappings)[MAX_REMAP_INSTRS]) {
     maxX = xPos > maxX ? xPos : maxX;
     minX = xPos < minX ? xPos : minX;
 
-    rv.x = xPos > 0 ? xPos * 127 / maxX : xPos * -128 / minX;
+    rv.x = (xPos > 0) ? (xPos * 127 / maxX) : (xPos * -128 / minX);
 
     maxY = yPos > maxY ? yPos : maxY;
     minY = yPos < minY ? yPos : minY;
 
-    rv.y = yPos > 0 ? yPos * 127 / maxY : yPos * -128 / minY;
+    rv.y = (yPos > 0) ? (yPos * 127 / maxY) : (yPos * -128 / minY);
 
     buttons[0] = controller_data[0].a;
     buttons[1] = controller_data[0].b;
@@ -248,12 +248,15 @@ StickData parse_remap(void *out, u8 bytes, u8 (*mappings)[MAX_REMAP_INSTRS]) {
     return rv;
 }
 
+#ifdef BBPLAYER
 static u8 block[1024 * 16];
 static OSBbFs fs;
 static OSBbStatBuf sb;
 static s32 fd;
+#endif
 
 void remap_init(const char *filename) {
+#ifdef BBPLAYER
     print("osBbFInit");
     osBbFInit(&fs);
 
@@ -291,4 +294,11 @@ void remap_init(const char *filename) {
     pokken_mapping = xinput_mapping + block[4];
 
     n64_mapping = pokken_mapping + block[5];
+#else
+    xinput_mapping = passthrough;
+
+    pokken_mapping = passthrough;
+
+    n64_mapping = passthrough;
+#endif
 }

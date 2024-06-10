@@ -16,5 +16,7 @@ extern OSMesg vi_mesg_buf[1];
 extern OSMesg vi_retrace_mesg;
 
 extern OSMesgQueue controller_mesg_queue;
+extern OSMesg controller_mesg_buf[1];
+extern OSMesg controller_mesg;
 
 #endif

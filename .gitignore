@@ -2,6 +2,7 @@
 
 build/
 lib/*.a
+disasm/
 
 *.bin
 
@@ -18,4 +19,4 @@ lib/*.a
 *.cht
 !lib/*.txt
 
-sa1.s
+qusb.asm

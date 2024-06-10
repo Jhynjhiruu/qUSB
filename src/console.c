@@ -14,8 +14,6 @@
 #define ROWS (_ROWS - 2 * OVERSCAN_V)
 #define COLUMNS (_COLUMNS - 2 * OVERSCAN_H)
 
-char lines[_ROWS][_COLUMNS];
-
 static FB_TYPE screenbuf[WIDTH * HEIGHT];
 
 static void move_up(u8 lines) {
@@ -25,9 +23,11 @@ static void move_up(u8 lines) {
           lines * WIDTH * CHAR_HEIGHT * sizeof(FB_TYPE));
 }
 
-static void sync_framebuf(void) {
+void sync_framebuf(void) {
     void *fb = osViGetNextFramebuffer();
-    bcopy(screenbuf, fb, WIDTH * HEIGHT * sizeof(FB_TYPE));
+    if ((fb != NULL) && (fb != (void *)K0BASE)) {
+        bcopy(screenbuf, fb, WIDTH * HEIGHT * sizeof(FB_TYPE));
+    }
 }
 
 static void print_char(FB_TYPE colour, size_t x, size_t y, int c) {
@@ -101,7 +101,6 @@ void print_u32(u32 num) {
 }
 
 void console_clear(void) {
-    bzero(lines, _ROWS * _COLUMNS);
     bzero(screenbuf, WIDTH * HEIGHT * sizeof(FB_TYPE));
 }
 

@@ -64,10 +64,11 @@ void mainproc(void *argv) {
     OSMesg msg;
 
     osCreateMesgQueue(&vi_mesg_queue, vi_mesg_buf, ARRLEN(vi_mesg_buf));
-    osViSetEvent(&vi_mesg_queue, vi_retrace_mesg, 1);
+    osViSetEvent(&vi_mesg_queue, (OSMesg)OS_EVENT_VI, 1);
 
     video_init();
 
+    osRecvMesg(&vi_mesg_queue, &msg, OS_MESG_BLOCK);
     osRecvMesg(&vi_mesg_queue, &msg, OS_MESG_BLOCK);
 
     console_init();

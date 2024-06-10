@@ -3,7 +3,7 @@
 
 #define WIDTH (320)
 #define HEIGHT (240)
-#define FRAMEBUF_ALIGN (8)
+#define FRAMEBUF_ALIGN (64)
 
 #define BITS (16)
 
